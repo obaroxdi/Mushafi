@@ -668,6 +668,7 @@
             <div class="h-px bg-night-800 my-2"></div>
             <button onclick="drawerGo(openOfflineModal)" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-night-850 hover:bg-night-800 active:bg-night-800 border border-night-800/80 text-start text-sm text-gold-100 transition"><svg class="w-5 h-5 text-gold-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg><span class="flex-1 min-w-0">Çevrimdışı Kur'an (604 Sayfa)</span><span id="offlineMenuBadge" class="text-[11px] font-mono text-gold-400/80"></span></button>
             <button onclick="drawerGo(openCloudSyncModal)" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-night-850 hover:bg-night-800 active:bg-night-800 border border-night-800/80 text-start text-sm text-gold-100 transition"><svg class="w-5 h-5 text-gold-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg><span class="flex-1 min-w-0">Bulut Senkronizasyonu</span><span id="cloudMenuDot" class="w-2 h-2 rounded-full bg-emerald-400"></span></button>
+            <button onclick="drawerGo(() => openLegalModal('privacy'))" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-night-850 hover:bg-night-800 active:bg-night-800 border border-night-800/80 text-start text-sm text-gold-100 transition"><svg class="w-5 h-5 text-gold-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="flex-1 min-w-0">Gizlilik, Şartlar & Kaynaklar</span></button>
         </nav>
     </aside>
 
@@ -1281,6 +1282,27 @@
         </div>
     </div>
 
+    <!-- Gizlilik Politikası, Kullanım Şartları ve Kaynak Atfı Modalı -->
+    <div id="legalModal" class="fixed inset-0 hidden bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" style="z-index:74">
+        <div class="w-full sm:max-w-lg max-h-[86vh] flex flex-col bg-night-900 border border-gold-500/25 rounded-t-2xl sm:rounded-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-night-800 shrink-0">
+                <h2 id="legalModalTitle" class="text-base font-semibold text-gold-100">Gizlilik, Şartlar & Kaynaklar</h2>
+                <button onclick="closeLegalModal()" class="p-2 rounded-xl bg-night-800 text-gold-300 hover:text-gold-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 px-5 pt-3 shrink-0">
+                <button id="legalTabPrivacy" onclick="switchLegalTab('privacy')" class="py-2 px-2 rounded-xl text-xs font-medium border transition">Gizlilik</button>
+                <button id="legalTabTerms" onclick="switchLegalTab('terms')" class="py-2 px-2 rounded-xl text-xs font-medium border transition">Kullanım Şartları</button>
+                <button id="legalTabCredits" onclick="switchLegalTab('credits')" class="py-2 px-2 rounded-xl text-xs font-medium border transition">Kaynak & Atıf</button>
+            </div>
+            <div id="legalModalBody" class="flex-1 overflow-y-auto px-5 py-4 text-xs text-gold-200/85 leading-relaxed space-y-3"></div>
+            <div class="px-5 py-3 border-t border-night-800 flex items-center justify-end shrink-0 bg-night-900">
+                <button onclick="closeLegalModal()" class="px-4 py-1.5 rounded-lg bg-gold-500/20 hover:bg-gold-500/30 border border-gold-500/40 text-xs font-medium text-gold-200 transition">Kapat</button>
+            </div>
+        </div>
+    </div>
+
     <!-- قراءة غيبا — Overlay (Floating Controls) -->
     <div id="ghaybOverlay" class="ghayb-hidden">
         <div class="g-banner" id="ghaybBanner">قراءة غيبا</div>
@@ -1520,6 +1542,8 @@
             if (typeof updateHifzBadges === 'function') updateHifzBadges();
             const _hm = document.getElementById('hifzModal');
             if (_hm && !_hm.classList.contains('hidden') && typeof renderHifzModal === 'function') renderHifzModal();
+            const _lm = document.getElementById('legalModal');
+            if (_lm && !_lm.classList.contains('hidden') && typeof switchLegalTab === 'function') switchLegalTab(_legalTab);
             if (typeof ghaybState !== 'undefined' && ghaybState.active && typeof showGhaybOverlay === 'function') {
                 showGhaybOverlay(ghaybState.mode, document.body.classList.contains('ghayb-page-revealed'));
             }
@@ -2579,10 +2603,26 @@
         }
 
         // ===== SABİT MUSHAF SAYFA DÜZENİ (15 satır) =====
+        // Quran Foundation backend proxy adresi (Cloudflare Worker kurduğunda buraya URL'yi yaz, örn: 'https://mushafi-proxy.seninad.workers.dev')
+        const QF_PROXY_URL = 'https://mushafi-proxy.obaroxdi.workers.dev';
+        const QF_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 gün
+
+        async function fetchWithRetry(url, opts = {}, maxRetries = 3) {
+            let delay = 1000;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                const res = await fetch(url, opts);
+                if (res.status !== 429 || attempt === maxRetries) return res;
+                const ra = parseInt(res.headers.get('Retry-After') || '0', 10);
+                await new Promise(r => setTimeout(r, ra > 0 ? ra * 1000 : delay));
+                delay *= 2;
+            }
+        }
+
         const layoutCache = new Map();
         async function fetchLayout(p) {
             if (layoutCache.has(p)) return layoutCache.get(p);
-            const r = await fetch(`https://api.quran.com/api/v4/verses/by_page/${p}?words=true&word_fields=text_uthmani,line_number&per_page=50`);
+            const base = QF_PROXY_URL ? QF_PROXY_URL.replace(/\/+$/, '') : 'https://api.quran.com/api/v4';
+            const r = await fetchWithRetry(`${base}/verses/by_page/${p}?words=true&word_fields=text_uthmani,line_number&per_page=50`);
             if (!r.ok) throw new Error('layout ' + r.status);
             const j = await r.json();
             if (!j.verses || !j.verses.length) throw new Error('layout empty');
@@ -2715,9 +2755,16 @@
             // Ekrana tek tıkla üst ve alt çubukları gizle / göster (Toggle UI on Tap)
             let tapStartTime = 0;
             let tapStartX = 0, tapStartY = 0;
+            let lastTouchTime = 0;
             const readerContainer = document.getElementById('readerContainer');
 
             const handleTapStart = (e) => {
+                if (e.touches) {
+                    if (e.touches.length !== 1) return;
+                    lastTouchTime = Date.now();
+                } else if (Date.now() - lastTouchTime < 800) {
+                    return; // Mobilde dokunma sonrası gelen sentetik mousedown'u yoksay
+                }
                 const pt = e.touches ? e.touches[0] : e;
                 tapStartTime = Date.now();
                 tapStartX = pt.clientX;
@@ -2725,6 +2772,11 @@
             };
 
             const handleTapEnd = (e) => {
+                if (e.changedTouches) {
+                    lastTouchTime = Date.now();
+                } else if (Date.now() - lastTouchTime < 800) {
+                    return; // Mobilde dokunma sonrası gelen sentetik mouseup'ı yoksay (çift toggle'ı önler)
+                }
                 if (longPressTriggered) {
                     longPressTriggered = false;
                     return;
@@ -2734,12 +2786,15 @@
                 const dist = Math.hypot(pt.clientX - tapStartX, pt.clientY - tapStartY);
 
                 // Kısa ve hareketsiz dokunuş (tap / click)
-                if (dt < 300 && dist < 12) {
+                if (dt < 450 && dist < 18) {
                     // Modal veya menü açıksa bar toggle yapma
                     const navOpen = !document.getElementById('navModal').classList.contains('hidden');
                     const setOpen = !document.getElementById('settingsModal').classList.contains('hidden');
+                    const ghaybOpen = document.getElementById('ghaybModal') && !document.getElementById('ghaybModal').classList.contains('hidden');
+                    const hifzOpen = document.getElementById('hifzModal') && !document.getElementById('hifzModal').classList.contains('hidden');
+                    const legalOpen = document.getElementById('legalModal') && !document.getElementById('legalModal').classList.contains('hidden');
                     const drawerOpen = document.getElementById('drawer').classList.contains('open');
-                    if (navOpen || setOpen || drawerOpen) return;
+                    if (navOpen || setOpen || ghaybOpen || hifzOpen || legalOpen || drawerOpen) return;
 
                     // Buton veya link tıklaması değilse
                     if (e.target.closest('button, a, input, [role="button"]')) return;
@@ -3635,8 +3690,9 @@
             }
         }
 
-        // fetchPageData sarmalayıcısı: önce bellek -> sonra IndexedDB çevrimdışı depo -> sonra ağ
+        // fetchPageData sarmalayıcısı: önce bellek -> sonra IndexedDB çevrimdışı depo (7 günde bir tazelenir) -> sonra ağ
         const _origFetchPageData = fetchPageData;
+        const _refreshingPages = new Set();
         fetchPageData = async function(pageNumber) {
             if (pageCache.has(pageNumber)) return pageCache.get(pageNumber);
             const stored = await idbGetPage(pageNumber);
@@ -3644,6 +3700,18 @@
                 const payload = { arabic: stored.arabic, layout: stored.layout || null };
                 pageCache.set(pageNumber, payload);
                 offlineStoredPageNumbers.add(pageNumber);
+
+                // İnternet varsa ve önbellek 7 günden eskiyse arka planda senkronize et
+                const isStale = !stored.savedAt || (Date.now() - stored.savedAt > QF_CACHE_TTL_MS);
+                if (isStale && navigator.onLine !== false && !_refreshingPages.has(pageNumber)) {
+                    _refreshingPages.add(pageNumber);
+                    _origFetchPageData(pageNumber).then(async (fresh) => {
+                        if (fresh && fresh.arabic) {
+                            pageCache.set(pageNumber, fresh);
+                            await idbPutPage(pageNumber, fresh);
+                        }
+                    }).catch(() => {}).finally(() => _refreshingPages.delete(pageNumber));
+                }
                 return payload;
             }
             const fresh = await _origFetchPageData(pageNumber);
@@ -4081,6 +4149,10 @@
             'Sure ara (örn: Bakara, Yâsîn, Mülk)...': ['ابحث عن سورة (مثل: البقرة، يس، الملك)...', 'Search surah (e.g. Baqarah, Yasin, Mulk)...'],
             'Tümünü Sıfırla': ['إعادة تعيين الكل', 'Reset All'],
             'Kapat': ['إغلاق', 'Close'],
+            'Gizlilik, Şartlar & Kaynaklar': ['الخصوصية والشروط والمصادر', 'Privacy, Terms & Credits'],
+            'Gizlilik': ['الخصوصية', 'Privacy'],
+            'Kullanım Şartları': ['شروط الاستخدام', 'Terms of Use'],
+            'Kaynak & Atıf': ['المصادر والشكر', 'Credits'],
             'قراءة غيبا — Kelime Kelime': ['قراءة غيبا — كلمة بكلمة', 'Ghayb — Word by Word'],
             'قراءة غيبا — Sayfa Gizlendi': ['قراءة غيبا — الصفحة مخفية', 'Ghayb — Page Hidden'],
             'قراءة غيبا — Sayfa Görünüyor': ['قراءة غيبا — الصفحة ظاهرة', 'Ghayb — Page Visible'],
@@ -4635,6 +4707,133 @@
         window.toggleHifzCurrentSurah = toggleHifzCurrentSurah;
         window.resetHifzProgress = resetHifzProgress;
         window.renderHifzSurahList = renderHifzSurahList;
+
+        // ============================================================
+        //  GİZLİLİK POLİTİKASI, KULLANIM ŞARTLARI & KAYNAK ATFI
+        // ============================================================
+        let _legalTab = 'privacy';
+
+        function openLegalModal(tab = 'privacy') {
+            switchLegalTab(tab);
+            document.getElementById('legalModal').classList.remove('hidden');
+        }
+
+        function closeLegalModal() {
+            document.getElementById('legalModal').classList.add('hidden');
+        }
+
+        function switchLegalTab(tab) {
+            _legalTab = tab || 'privacy';
+            const tabs = {
+                privacy: document.getElementById('legalTabPrivacy'),
+                terms: document.getElementById('legalTabTerms'),
+                credits: document.getElementById('legalTabCredits')
+            };
+            Object.entries(tabs).forEach(([k, el]) => {
+                if (!el) return;
+                el.className = 'py-2 px-2 rounded-xl text-xs font-medium border transition ' +
+                    (k === _legalTab ? 'bg-gold-500/20 border-gold-400 text-gold-100' : 'bg-night-850 border-night-800 text-gold-300/70 hover:text-gold-100');
+            });
+
+            const body = document.getElementById('legalModalBody');
+            if (!body) return;
+
+            if (_legalTab === 'privacy') {
+                body.innerHTML = _tr3(
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Gizlilik Politikası (Son Güncelleme: 2026-11-26)</p>
+                        <p><strong>Mushafi</strong>, tamamen ücretsiz, reklamsız ve ticari olmayan bir Kur'an okuma ve ezber (hıfz) web uygulamasıdır.</p>
+                        <p><strong>Toplanan Veriler:</strong> Uygulama varsayılan olarak hiçbir kişisel veriyi sunucuda saklamaz. Okuma konumunuz, yer imleriniz, notlarınız, hatim ilerlemeniz, hıfz işaretleriniz ve çevrimdışı indirilen sayfalar yalnızca kendi cihazınızdaki tarayıcı deposunda (<code>localStorage</code> ve <code>IndexedDB</code>) tutulur.</p>
+                        <p><strong>Üçüncü Taraf İzleme:</strong> Uygulamada reklam, analitik takip çerezi veya veri satışı kesinlikle yoktur. Sayfa metinleri ve düzeni yalnızca API üzerinden cihazınıza getirilir.</p>
+                        <p><strong>Veri Silme:</strong> İstediğiniz zaman tarayıcı verilerini temizleyerek veya uygulama içi sıfırlama seçeneklerini kullanarak tüm verilerinizi cihazınızdan kalıcı olarak silebilirsiniz.</p>
+                        <p><strong>İletişim:</strong> Geliştirici ile GitHub üzerinden iletişime geçebilirsiniz: <a href="https://github.com/obaroxdi/Mushafi" target="_blank" rel="noopener" class="text-gold-400 underline">github.com/obaroxdi/Mushafi</a></p>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">سياسة الخصوصية (آخر تحديث: 2026-11-26)</p>
+                        <p><strong>مصحفي</strong> هو تطبيق ويب مجاني بالكامل، خالٍ من الإعلانات وغير تجاري لقراءة القرآن الكريم ومراجعة الحفظ.</p>
+                        <p><strong>البيانات المخزنة:</strong> لا يحتفظ التطبيق بأي بيانات شخصية على الخوادم افتراضياً. يتم حفظ موضع القراءة، الإشارات المرجعية، الملاحظات، تقدم الختمات، سجل الحفظ، والصفحات المحفوظة دون اتصال محلياً في متصفح جهازك فقط (<code>localStorage</code> و <code>IndexedDB</code>).</p>
+                        <p><strong>التتبع والإعلانات:</strong> لا يستخدم التطبيق أي إعلانات أو ملفات تعريف ارتباط للتتبع، ولا يبيع أو يشارك بياناتك مع أي طرف ثالث.</p>
+                        <p><strong>حذف البيانات:</strong> يمكنك حذف جميع بياناتك نهائياً في أي وقت عبر مسح بيانات المتصفح أو من خلال خيارات إعادة التعيين داخل التطبيق.</p>
+                        <p><strong>التواصل:</strong> يمكنك التواصل مع المطور عبر GitHub: <a href="https://github.com/obaroxdi/Mushafi" target="_blank" rel="noopener" class="text-gold-400 underline">github.com/obaroxdi/Mushafi</a></p>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Privacy Policy (Last Updated: 2026-11-26)</p>
+                        <p><strong>Mushafi</strong> is a completely free, ad-free, and non-commercial Quran reading and memorization web application.</p>
+                        <p><strong>Data Storage:</strong> By default, no personal data is collected or stored on any server. Your reading progress, bookmarks, notes, khatm logs, Hifz tracking, and offline pages are stored locally only in your browser (<code>localStorage</code> and <code>IndexedDB</code>).</p>
+                        <p><strong>Tracking & Ads:</strong> There are no ads, no analytics trackers, and no third-party data sharing.</p>
+                        <p><strong>Data Deletion:</strong> You can permanently delete all stored data at any time by clearing your browser storage or using the in-app reset options.</p>
+                        <p><strong>Contact:</strong> Developer repository: <a href="https://github.com/obaroxdi/Mushafi" target="_blank" rel="noopener" class="text-gold-400 underline">github.com/obaroxdi/Mushafi</a></p>
+                    </div>`
+                );
+            } else if (_legalTab === 'terms') {
+                body.innerHTML = _tr3(
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Kullanım Şartları</p>
+                        <p><strong>Ticari Olmayan Kullanım:</strong> Mushafi herkesin ücretsiz istifade etmesi için hazırlanmıştır. Ticari amaçla satılamaz veya ücretli bir hizmetin parçası haline getirilemez.</p>
+                        <p><strong>İçerik & Çevrimdışı Önbellek:</strong> Uygulamada gösterilen Kur'an-ı Kerim metni ve 15 satırlık Medine Mushafı düzeni yalnızca bireysel okuma amacıyla tarayıcıda önbelleğe alınır; içerik verilerinin yeniden dağıtımı veya ticari çoğaltımı yapılamaz. İnternet bağlantısı olduğunda çevrimdışı sayfalar en az 7 günde bir güncellenir.</p>
+                        <p><strong>Sorumluluk Reddi:</strong> Uygulama "olduğu gibi" sunulmaktadır; kesintisiz erişim garantisi verilmez.</p>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">شروط الاستخدام</p>
+                        <p><strong>الاستخدام غير التجاري:</strong> تطبيق مصحفي مجاني ومتاح للجميع لوجه الله تعالى، ولا يجوز استخدامه أو بيعه لأغراض تجارية.</p>
+                        <p><strong>المحتوى والتخزين المؤقت:</strong> يتم تخزين نص القرآن الكريم وتنسيق مصحف المدينة (15 سطراً) مؤقتاً في متصفحك للقراءة الشخصية فقط، ويُمنع إعادة توزيع المحتوى. يتم تحديث الصفحات المخزنة كل 7 أيام على الأقل عند توفر الاتصال.</p>
+                        <p><strong>إخلاء المسؤولية:</strong> يُقدّم التطبيق "كما هو" دون أي ضمانات تشغيلية.</p>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Terms of Use</p>
+                        <p><strong>Non-Commercial Use:</strong> Mushafi is provided free of charge for everyone and must remain strictly non-commercial.</p>
+                        <p><strong>Content & Offline Cache:</strong> Quran text and Madani 15-line mushaf layout data are cached locally in your browser solely for personal reading and may not be redistributed. Offline copies refresh at least every 7 days when connectivity is available.</p>
+                        <p><strong>Disclaimer:</strong> The app is provided "as is" without warranties of any kind.</p>
+                    </div>`
+                );
+            } else {
+                body.innerHTML = _tr3(
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Kaynaklar & Atıf (Attribution)</p>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">Quran Foundation (Quran.com API)</p>
+                            <p>15 satırlık Medine Mushafı sayfa düzeni verileri <strong>Quran Foundation</strong> Content API üzerinden sağlanmaktadır.</p>
+                            <a href="https://quran.foundation" target="_blank" rel="noopener" class="text-gold-400 underline">https://quran.foundation</a>
+                        </div>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">Al-Quran Cloud API</p>
+                            <p>Kur'an metni ve sure verileri desteği.</p>
+                            <a href="https://alquran.cloud" target="_blank" rel="noopener" class="text-gold-400 underline">https://alquran.cloud</a>
+                        </div>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">المصادر والإسناد (Attribution)</p>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">مؤسسة القرآن (Quran Foundation)</p>
+                            <p>يتم توفير بيانات تنسيق صفحات مصحف المدينة (15 سطراً) عبر واجهة برمجة تطبيقات <strong>Quran Foundation</strong>.</p>
+                            <a href="https://quran.foundation" target="_blank" rel="noopener" class="text-gold-400 underline">https://quran.foundation</a>
+                        </div>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">Al-Quran Cloud API</p>
+                            <p>دعم النص القرآني وبيانات السور.</p>
+                            <a href="https://alquran.cloud" target="_blank" rel="noopener" class="text-gold-400 underline">https://alquran.cloud</a>
+                        </div>
+                    </div>`,
+                    `<div class="space-y-3">
+                        <p class="font-semibold text-gold-100">Sources & Attribution</p>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">Quran Foundation (Quran.com API)</p>
+                            <p>Madani 15-line mushaf layout data is powered by <strong>Quran Foundation</strong> Content APIs.</p>
+                            <a href="https://quran.foundation" target="_blank" rel="noopener" class="text-gold-400 underline">https://quran.foundation</a>
+                        </div>
+                        <div class="p-3 rounded-xl bg-night-850 border border-night-800 space-y-1.5">
+                            <p class="font-semibold text-gold-200">Al-Quran Cloud API</p>
+                            <p>Quran text and surah metadata support.</p>
+                            <a href="https://alquran.cloud" target="_blank" rel="noopener" class="text-gold-400 underline">https://alquran.cloud</a>
+                        </div>
+                    </div>`
+                );
+            }
+        }
+
+        window.openLegalModal = openLegalModal;
+        window.closeLegalModal = closeLegalModal;
+        window.switchLegalTab = switchLegalTab;
 
         // ============================================================
         // saveState sarmalayıcısı: her kayıtta gerçek zamanlı senkronizasyonu tetikler
